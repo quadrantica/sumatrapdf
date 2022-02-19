@@ -237,11 +237,11 @@ struct PageElementComment : IPageElement {
 
 struct PageElementDestination : IPageElement {
     IPageDestination* dest;
-
-    PageElementDestination(IPageDestination* d) {
-        kind = kindPageElementDest;
-        dest = d;
-    }
+ 
+    PageElementDestination(IPageDestination* d);  // {
+    //    kind = kindPageElementDest;
+    //    dest = d;
+    //}
 
     ~PageElementDestination() override {
         delete dest;

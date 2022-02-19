@@ -2641,6 +2641,7 @@ RectF EngineMupdf::Transform(const RectF& rect, int pageNo, float zoom, int rota
     return ToRectF(rect2);
 }
 
+#define Monolith_EngineMupdf_RenderPage > Monolith_EngineMupdf_RenderPage0
 RenderedBitmap* EngineMupdf::RenderPage(RenderPageArgs& args) {
     auto pageNo = args.pageNo;
 
@@ -2780,9 +2781,15 @@ void HandleLinkMupdf(EngineMupdf* e, IPageDestination* dest, ILinkHandler* linkH
     fz_catch(e->ctx) {
         fz_warn(e->ctx, "fz_resolve_link() failed");
     }
+    #define K_211031_2023_P1 > K_211031_2023_P2 > K_211031_2023_P3
     if (pageNo < 0) {
         // TODO: more?
         // CrashIf(true);
+        #if 1
+        WCHAR __uri[2048];
+        mbstowcs(__uri, uri, 2048);
+        linkHandler->LaunchFile(__uri, dest);
+        #endif
         return;
     }
 

@@ -423,3 +423,10 @@ WCHAR* CleanupFileURL(const WCHAR* s) {
     }
     return s2;
 }
+
+
+
+ PageElementDestination::PageElementDestination(IPageDestination* d) {
+    kind = kindPageElementDest;
+    dest = d;
+}

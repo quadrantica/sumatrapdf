@@ -601,6 +601,10 @@
   <ItemGroup>
     <ClCompile Include="..\ext\synctex\synctex_parser.c" />
     <ClCompile Include="..\ext\synctex\synctex_parser_utils.c" />
+    <ClCompile Include="..\Monolith\Monolith.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\src\Accelerators.cpp" />
     <ClCompile Include="..\src\Actions.cpp" />
     <ClCompile Include="..\src\AppColors.cpp" />

@@ -100,7 +100,7 @@ using std::placeholders::_1;
 /* if true, we're in debug mode where we show links as blue rectangle on
    the screen. Makes debugging code related to links easier. */
 #if defined(DEBUG)
-bool gDebugShowLinks = true;
+bool gDebugShowLinks = false; // true;
 #else
 bool gDebugShowLinks = false;
 #endif

@@ -68,7 +68,7 @@ static bool gPredictiveRender = true;
 
 static int ColumnsFromDisplayMode(DisplayMode displayMode) {
     if (!IsSingle(displayMode)) {
-        return 2;
+        return 3;
     }
     return 1;
 }
@@ -677,7 +677,7 @@ RestartLayout:
        rotation, columns parameters. You can think of it as a simple
        table layout i.e. rows with a fixed number of columns. */
     int columns = ColumnsFromDisplayMode(GetDisplayMode());
-    int columnMaxWidth[2] = {0, 0};
+    int columnMaxWidth[32] = {0, 0};
     int pageInARow = 0;
     int rowMaxPageDy = 0;
     for (int pageNo = 1; pageNo <= PageCount(); ++pageNo) {
@@ -751,7 +751,7 @@ RestartLayout:
         goto RestartLayout;
     }
 
-    if (columns == 2 && PageCount() == 1) {
+    if (columns > 1 && PageCount() == 1) {
         /* don't center a single page over two columns */
         if (IsBookView(GetDisplayMode())) {
             columnMaxWidth[0] = columnMaxWidth[1];
@@ -762,8 +762,15 @@ RestartLayout:
 
     // restart the layout if we detect we need to show scrollbars
     // (there are some edge cases we can't catch in the above loop)
-    int canvasDx = windowMargin.left + columnMaxWidth[0] + (columns == 2 ? pageSpacing.dx + columnMaxWidth[1] : 0) +
-                   windowMargin.right;
+    //int canvasDx = windowMargin.left + columnMaxWidth[0] + (columns == 2 ? pageSpacing.dx + columnMaxWidth[1] : 0) +
+    //               windowMargin.right;
+
+    int canvasDx = windowMargin.left + columnMaxWidth[0];
+    for (int i = 1; i < columns; i++) {
+        canvasDx += (pageSpacing.dx + columnMaxWidth[i]);
+    }
+    canvasDx += windowMargin.right;
+
     if ((!gGlobalPrefs->fixedPageUI.hideScrollbars) && (!needHScroll) && canvasDx > viewPort.dx) {
         needHScroll = true;
         viewPort.dy -= GetSystemMetrics(SM_CYHSCROLL);

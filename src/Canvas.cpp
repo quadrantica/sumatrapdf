@@ -703,6 +703,7 @@ static void PaintPageFrameAndShadow(HDC hdc, Rect& bounds, Rect& pageRect, bool 
     Rectangle(hdc, frame.x, frame.y, frame.x + frame.dx, frame.y + frame.dy);
 }
 #else
+#if 0
 static void PaintPageFrameAndShadow(HDC hdc, Rect& bounds, Rect&, bool) {
     AutoDeletePen pen(CreatePen(PS_NULL, 0, 0));
     auto col = GetAppColor(AppColor::MainWindowBg);
@@ -711,6 +712,7 @@ static void PaintPageFrameAndShadow(HDC hdc, Rect& bounds, Rect&, bool) {
     ScopedSelectObject restoreBrush(hdc, brush);
     Rectangle(hdc, bounds.x, bounds.y, bounds.x + bounds.dx + 1, bounds.y + bounds.dy + 1);
 }
+#endif
 #endif
 
 /* debug code to visualize links (can block while rendering) */
@@ -874,7 +876,9 @@ static void DrawDocument(WindowInfo* win, HDC hdc, RECT* rcArea) {
         if (!dm->GetEngine()->IsImageCollection()) {
             Rect r = pageInfo->pageOnScreen;
             auto presMode = win->presentation;
-            PaintPageFrameAndShadow(hdc, bounds, r, presMode);
+            #if 0
+                PaintPageFrameAndShadow(hdc, bounds, r, presMode);
+            #endif
         }
 
         bool renderOutOfDateCue = false;

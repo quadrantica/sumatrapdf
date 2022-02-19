@@ -428,6 +428,44 @@ void LinkHandler::LaunchURL(const char* uri) {
     }
 }
 
+
+static inline int ishex(int a) {
+    return (a >= 'A' && a <= 'F') || (a >= 'a' && a <= 'f') || (a >= '0' && a <= '9');
+}
+
+static inline int tohex(int c) {
+    if (c >= '0' && c <= '9')
+        return c - '0';
+    if (c >= 'a' && c <= 'f')
+        return c - 'a' + 0xA;
+    if (c >= 'A' && c <= 'F')
+        return c - 'A' + 0xA;
+    return 0;
+}
+
+WCHAR* fz_urldecode(WCHAR* url, WCHAR*wp, int wpSize) {
+    char pp[2048];
+    char* p = pp;
+    int len = 0;
+    WCHAR* s = url;
+    while (*s) {
+        int c = (unsigned char)*s++;
+        if (c == '%' && ishex(s[0]) && ishex(s[1])) {
+            int a = tohex(*s++);
+            int b = tohex(*s++);
+            *p++ = a << 4 | b;
+            ++len;
+        } else {
+            *p++ = c;
+            ++len;
+        }
+    }
+    *p = 0;
+    len = MultiByteToWideChar(CP_UTF8, 0, pp, len, wp, wpSize);
+    wp[len] = L'\0';
+    return url;
+}
+
 void LinkHandler::LaunchFile(const WCHAR* pathOrig, IPageDestination* link) {
     // for safety, only handle relative paths and only open them in SumatraPDF
     // (unless they're of an allowed perceived type) and never launch any external
@@ -443,23 +481,72 @@ void LinkHandler::LaunchFile(const WCHAR* pathOrig, IPageDestination* link) {
         path.Set(str::Dup(path + 2));
     }
 
+
+    static WCHAR _path[2048];
+    fz_urldecode(path.Get(), _path, 2048);
+    
+
+    #define K_211031_2023_P2 > K_211031_2023_P1 > K_211031_2023_P3
+    AutoFreeWstr __path;
+    AutoFreeWstr __args;
+    if (!str::Parse(_path, L"%s?%s", &__path, &__args)) {
+        __path.SetCopy(_path);
+        __args.SetCopy(_path);
+    }
+
+
+
+
+
     WCHAR drive;
-    bool isAbsPath = str::StartsWith(path, L"\\") || str::Parse(path, L"%c:\\", &drive);
+    bool isAbsPath = str::StartsWith(__path, L"\\") || str::Parse(__path, L"%c:\\", &drive);
+
+
+#if 0
     if (isAbsPath) {
         return;
     }
+#endif
 
     IPageDestination* remoteLink = link;
     AutoFreeWstr fullPath(path::GetDir(win->ctrl->GetFilePath()));
-    fullPath.Set(path::Join(fullPath, path));
 
+#if 0
+    fullPath.Set(path::Join(fullPath, path));
+#else
+    if (isAbsPath) {
+        fullPath.SetCopy(__path);
+    } else {
+        fullPath.Set(path::Join(fullPath, __path));
+    }
+#endif
     // TODO: respect link->ld.gotor.new_window for PDF documents ?
     WindowInfo* newWin = FindWindowInfoByFile(fullPath, true);
     // TODO: don't show window until it's certain that there was no error
     if (!newWin) {
+        if (__args) {
+            HWND hwnd = ::FindWindowExW(NULL, NULL, NULL, __args);
+            if (hwnd != NULL) {
+                HWND mainWnd = GetActiveWindow();
+                if (hwnd != mainWnd) {
+                    SetWindowPos(mainWnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);                   
+                }
+                win::ToForeground(hwnd); //::SetForegroundWindow(hwnd);
+                return;
+            }
+        }
+
         LoadArgs args(fullPath, win);
-        newWin = LoadDocument(args);
+        newWin = nullptr; //LoadDocument(args);
         if (!newWin) {
+            std::wstring s(fullPath);
+            if (!s.ends_with(L".pdf") && !s.ends_with(L".PDF")) {
+                HWND mainWnd = GetActiveWindow();
+                SetWindowPos(mainWnd, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            }
+
+            ::LaunchFile(fullPath, nullptr, L"open");
+            
             return;
         }
     }
