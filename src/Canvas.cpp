@@ -1046,8 +1046,17 @@ static LRESULT CanvasOnMouseWheel(WindowInfo* win, UINT msg, WPARAM wp, LPARAM l
 
     short delta = GET_WHEEL_DELTA_WPARAM(wp);
 
+
     // Note: not all mouse drivers correctly report the Ctrl key's state
-    if ((LOWORD(wp) & MK_CONTROL) || IsCtrlPressed() || (LOWORD(wp) & MK_RBUTTON)) {
+    //if ((LOWORD(wp) & MK_CONTROL) || IsCtrlPressed() || (LOWORD(wp) & MK_RBUTTON)) {
+    // 220219_1626_QUADRANTICA: MOUSE WHEEL DEFAULTS TO ZOOM
+    bool zoomMode = ((GetKeyState(VK_CAPITAL) & 0x0001) != 0);
+    if (zoomMode) {
+        zoomMode = !((LOWORD(wp) & MK_CONTROL) || IsCtrlPressed() || (LOWORD(wp) & MK_RBUTTON));
+    } else {
+        zoomMode = ((LOWORD(wp) & MK_CONTROL) || IsCtrlPressed() || (LOWORD(wp) & MK_RBUTTON));
+    }    
+    if (zoomMode) {
         Point pt;
         GetCursorPosInHwnd(win->hwndCanvas, pt);
 
