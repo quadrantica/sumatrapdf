@@ -3717,11 +3717,19 @@ bool FrameOnKeydown(WindowInfo* win, WPARAM key, LPARAM lp, bool inTextfield) {
     return true;
 }
 
+static void OnFrameKillFocus(WindowInfo* win);
+bool FrameOnKillfocus(WindowInfo* win) {
+    OnFrameKillFocus(win);    
+    return true;
+}
+
 static WCHAR SingleCharLowerW(WCHAR c) {
     WCHAR buf[2] = {c, 0};
     CharLowerBuffW(buf, 1);
     return buf[0];
 }
+
+static bool FrameOnTheBottom = false;
 
 static void OnFrameKeyEsc(WindowInfo* win) {
     if (win->findThread) {
@@ -3752,6 +3760,17 @@ static void OnFrameKeyEsc(WindowInfo* win) {
         OnMenuViewFullscreen(win, win->presentation != PM_DISABLED);
         return;
     }
+    if (FrameOnTheBottom) {
+        SetWindowPos(win->hwndFrame, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        FrameOnTheBottom = false;
+    } else {
+        SetWindowPos(win->hwndFrame, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        FrameOnTheBottom = true;
+    }
+}
+
+static void OnFrameKillFocus(WindowInfo* win) {
+    FrameOnTheBottom = false;
 }
 
 static void OnFrameKeyB(WindowInfo* win) {
@@ -4879,6 +4898,11 @@ LRESULT CALLBACK WndProcSumatraFrame(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) 
             }
             break;
 
+        case WM_KILLFOCUS:
+            if(win){
+                FrameOnKillfocus(win);   
+            }
+            break;
         case WM_SYSKEYUP:
             // pressing and releasing the Alt key focuses the menu even if
             // the wheel has been used for scrolling horizontally, so we
