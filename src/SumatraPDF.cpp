@@ -3760,11 +3760,41 @@ static void OnFrameKeyEsc(WindowInfo* win) {
         OnMenuViewFullscreen(win, win->presentation != PM_DISABLED);
         return;
     }
+    /*
+From http://www.codeguru.com/forum/showthread.php?t=310202:
+#define MIN_ALL        419
+#define MIN_ALL_UNDO   416
+int main(int argc, char* argv[])
+{
+HWND lHwnd = FindWindow("Shell_TrayWnd",NULL);
+SendMessage(lHwnd,WM_COMMAND,MIN_ALL,0); // Minimize all windows
+Sleep(2000);
+SendMessage(lHwnd,WM_COMMAND,MIN_ALL_UNDO,0); // Bring all back up again.
+return 0;
+}
+    */
     if (FrameOnTheBottom) {
-        SetWindowPos(win->hwndFrame, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        if (IsShiftPressed()) {
+            HWND hwnd = FindWindow(L"Shell_TrayWnd", NULL);
+            LRESULT res = SendMessage(hwnd, WM_COMMAND, (WPARAM)416, 0);
+            //Sleep(200);
+            //ShowWindow(win->hwndFrame, SW_SHOW);
+            //SetForegroundWindow(win->hwndFrame);
+            //PostMessage(win->hwndFrame, WM_USER + 1000, 0, 0);
+        } else {
+            SetWindowPos(win->hwndFrame, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        }
         FrameOnTheBottom = false;
     } else {
-        SetWindowPos(win->hwndFrame, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        if (IsShiftPressed()) {
+            HWND hwnd = FindWindow(L"Shell_TrayWnd", NULL);
+            LRESULT res = SendMessage(hwnd, WM_COMMAND, (WPARAM)419, 0);
+            //Sleep(200);
+            //ShowWindow(win->hwndFrame, SW_SHOWNORMAL);
+            //PostMessage(win->hwndFrame, WM_USER + 1001, 0, 0);
+        } else {
+            SetWindowPos(win->hwndFrame, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+        }
         FrameOnTheBottom = true;
     }
 }

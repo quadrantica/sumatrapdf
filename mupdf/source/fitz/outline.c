@@ -109,6 +109,7 @@ load_outline_sub(fz_context *ctx, fz_outline_iterator *iter, fz_outline **tail, 
 		*t = NULL;
 		*u = NULL;
 		node->page = fz_resolve_link(ctx, iter->doc, node->uri, &node->x, &node->y);
+
 		*tail = node;
 		tail = &node->next;
 		onode = node;

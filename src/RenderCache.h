@@ -114,6 +114,8 @@ class RenderCache {
     RenderCache& operator=(RenderCache const&) = delete;
     ~RenderCache();
 
+    void Start();
+
     void RequestRendering(DisplayModel* dm, int pageNo);
     void Render(DisplayModel* dm, int pageNo, int rotation, float zoom, RectF pageRect, RenderingCallback& callback);
     void CancelRendering(DisplayModel* dm);

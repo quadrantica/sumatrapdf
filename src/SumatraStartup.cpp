@@ -1191,8 +1191,14 @@ int APIENTRY WinMain(HINSTANCE hInstance, __unused HINSTANCE hPrevInstance, __un
     ResetSessionState(gGlobalPrefs->sessionData);
 
     for (const WCHAR* filePath : flags.fileNames) {
-        if (restoreSession && FindWindowInfoByFile(filePath, false)) {
-            continue;
+        if (restoreSession){
+            win = FindWindowInfoByFile(filePath, false);
+            if (win) {
+                if (win->IsDocLoaded() && flags.destName) {
+                    win->linkHandler->GotoNamedDest(flags.destName);
+                }
+                continue;
+            }
         }
         auto path = ToUtf8Temp(filePath);
         win = LoadOnStartup(filePath, flags, !win);
@@ -1275,6 +1281,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, __unused HINSTANCE hPrevInstance, __un
     ChangeCurrDirToDocuments();
 
     CheckForUpdateAsync(win, UpdateCheck::Automatic);
+
+    gRenderCache.Start();
 
     BringWindowToTop(win->hwndFrame);
 

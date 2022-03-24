@@ -499,7 +499,8 @@ void LinkHandler::LaunchFile(const WCHAR* pathOrig, IPageDestination* link) {
 
 
     WCHAR drive;
-    bool isAbsPath = str::StartsWith(__path, L"\\") || str::Parse(__path, L"%c:\\", &drive);
+    bool isAbsPath = str::StartsWith(__path, L"\\") || str::Parse(__path, L"%c:\\", &drive) ||
+                     str::Parse(__path, L"file:///%c:/", &drive) || str::Parse(__path, L"file://%c:/", &drive);
 
 
 #if 0
