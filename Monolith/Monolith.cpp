@@ -93,6 +93,10 @@
 
 #define _(...)
 
+#include "../src/SumatraStartup.cpp"
+#include "../src/EngineMupdf.cpp"
+#include "../src/WindowInfo.cpp"
+#include "../src/TableOfContents.cpp"
 #include "../src/EngineMupdf.cpp"
 
                                            _( - LoadDocument                                                                                       )
@@ -116,3 +120,13 @@
                                            _(     - DisplayModel                                                                                   )                                           
                                            _( - EngineBase                                                                                         )
                                            _(   - RenderPage=0 -> RenderedBitmap                                                                   )
+
+
+_(                   Monolith_WinMain: int APIENTRY WinMain(HINSTANCE hInstance, __unused HINSTANCE hPrevInstance, __unused LPSTR cmdLine, __unused int nCmdShow) )
+_(             Monolith_LoadOnStartup: static WindowInfo* LoadOnStartup(const WCHAR* filePath, const Flags& flags, bool isFirstWin) )
+_( Monolith_LinkHandler_GotoNamedDest: void LinkHandler::GotoNamedDest(const WCHAR* name) )
+_(           Monolith_GoToTocLinkTask: static void GoToTocLinkTask(TocItem* tocItem, TabInfo* tab, Controller* ctrl) )
+_(    Monolith_EngineMupdf_HandleLink: bool EngineMupdf::HandleLink(IPageDestination* dest, ILinkHandler* linkHandler) )
+_(      Monolith_LinkHandler_GotoLink: void LinkHandler::GotoLink(IPageDestination* dest) )
+
+

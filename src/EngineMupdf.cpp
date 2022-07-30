@@ -46,7 +46,7 @@ static float layoutFontEm = 11.f;
 // maximum size of a file that's entirely loaded into memory before parsed
 // and displayed; larger files will be kept open while they're displayed
 // so that their content can be loaded on demand in order to preserve memory
-constexpr i64 kMaxMemoryFileSize = 32 * 1024 * 1024;
+constexpr i64 kMaxMemoryFileSize = 32 * 1024 * 1024 * 4;
 
 // in mupdf_load_system_font.c
 extern "C" void drop_cached_fonts_for_ctx(fz_context*);
@@ -2798,6 +2798,7 @@ void HandleLinkMupdf(EngineMupdf* e, IPageDestination* dest, ILinkHandler* linkH
     ctrl->ScrollTo(pageNo + 1, r, zoom);
 }
 
+#define Monolith_EngineMupdf_HandleLink
 bool EngineMupdf::HandleLink(IPageDestination* dest, ILinkHandler* linkHandler) {
     Kind k = dest->GetKind();
     if (k == kindDestinationMupdf) {

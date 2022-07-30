@@ -347,6 +347,7 @@ bool WindowInfo::CreateUIAProvider() {
     return true;
 }
 
+#define Monolith_LinkHandler_GotoLink
 void LinkHandler::GotoLink(IPageDestination* dest) {
     CrashIf(!win || win->linkHandler != this);
     if (!dest || !win || !win->IsDocLoaded()) {
@@ -624,6 +625,7 @@ IPageDestination* LinkHandler::FindTocItem(TocItem* item, const WCHAR* name, boo
     return nullptr;
 }
 
+#define Monolith_LinkHandler_GotoNamedDest
 void LinkHandler::GotoNamedDest(const WCHAR* name) {
     CrashIf(!win || win->linkHandler != this);
     Controller* ctrl = win->ctrl;

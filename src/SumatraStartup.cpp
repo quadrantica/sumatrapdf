@@ -265,7 +265,7 @@ static WindowInfo* LoadOnStartup(const WCHAR* filePath, const Flags& flags, bool
     if (!win) {
         return win;
     }
-
+    #define Monolith_LoadOnStartup
     if (win->IsDocLoaded() && flags.destName && isFirstWin) {
         win->linkHandler->GotoNamedDest(flags.destName);
     } else if (win->IsDocLoaded() && flags.pageNumber > 0 && isFirstWin) {
@@ -1190,6 +1190,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, __unused HINSTANCE hPrevInstance, __un
     }
     ResetSessionState(gGlobalPrefs->sessionData);
 
+    #define Monolith_WinMain
     for (const WCHAR* filePath : flags.fileNames) {
         if (restoreSession){
             win = FindWindowInfoByFile(filePath, false);

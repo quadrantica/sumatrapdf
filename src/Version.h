@@ -6,7 +6,7 @@
 #define CURR_VERSION 3.4
 #endif
 #ifndef CURR_VERSION_COMMA
-#define CURR_VERSION_COMMA 3,4,0
+#define CURR_VERSION_COMMA 3,4,9001
 #endif
 
 // this is sth. like "3.4"

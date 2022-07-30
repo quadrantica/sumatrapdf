@@ -6,7 +6,8 @@ int GetTabbarHeight(HWND, float factor = 1.f);
 void SaveCurrentTabInfo(WindowInfo* win);
 void LoadModelIntoTab(TabInfo* tab);
 
-void CreateTabbar(WindowInfo* win);
+void CreateTabbar(WindowInfo* win, bool subclass=true );
+void SubclassTabbar(WindowInfo* win);
 TabInfo* CreateNewTab(WindowInfo* win, const WCHAR* filePath);
 void TabsOnCloseDoc(WindowInfo* win);
 void TabsOnCloseWindow(WindowInfo* win);

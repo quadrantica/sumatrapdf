@@ -498,6 +498,15 @@ static LRESULT CALLBACK TabBarProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp, __
                 tab->Invalidate(index);
                 tab->selectedTabIdx = index;
                 UpdateWindow(hwnd);
+
+
+
+                int ctrlId = GetDlgCtrlID(hwnd);
+                NMHDR ntd = {hwnd, ctrlId, (UINT)TCN_SELCHANGING};
+                HWND hwndParent = GetParent(hwnd);
+                //SendMessage(hwndParent,WM_NOTIFY,ctrlId,(LPARAM)&ntd);
+                ntd.code = (UINT)TCN_SELCHANGE;
+                SendMessage(hwndParent,WM_NOTIFY,ctrlId,(LPARAM)&ntd);
             }
             return previous;
         }
@@ -650,15 +659,25 @@ static LRESULT CALLBACK TabBarProc(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp, __
     return DefSubclassProc(hwnd, msg, wp, lp);
 }
 
-void CreateTabbar(WindowInfo* win) {
+void SubclassTabbar(WindowInfo* win) {
+    TabsCtrl2* tabsCtrl = win->tabsCtrl;
+    HWND hwndTabBar = tabsCtrl->hwnd;
+    HWND hwndParent = GetParent(hwndTabBar);
+    SetWindowSubclass(hwndParent, TabBarParentProc, 0, (DWORD_PTR)win);
+}
+
+void CreateTabbar(WindowInfo* win, bool subclass) {
     TabsCtrl2* tabsCtrl = new TabsCtrl2(win->hwndFrame);
     tabsCtrl->ctrlID = IDC_TABBAR;
     tabsCtrl->createToolTipsHwnd = true;
     tabsCtrl->Create();
 
     HWND hwndTabBar = tabsCtrl->hwnd;
-    SetWindowSubclass(hwndTabBar, TabBarProc, 0, (DWORD_PTR)win);
-    SetWindowSubclass(GetParent(hwndTabBar), TabBarParentProc, 0, (DWORD_PTR)win);
+    if(!subclass){
+        SetWindowSubclass(hwndTabBar, TabBarProc, 0, (DWORD_PTR)win);
+        HWND hwndParent = GetParent(hwndTabBar);
+        SetWindowSubclass(hwndParent, TabBarParentProc, 0, (DWORD_PTR)win);
+    }
 
     Size tabSize = GetTabSize(win->hwndFrame);
     TabPainter* tp = new TabPainter(tabsCtrl, tabSize);

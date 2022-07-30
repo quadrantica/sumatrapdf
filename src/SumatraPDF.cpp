@@ -1371,7 +1371,7 @@ static WindowInfo* CreateWindowInfo() {
     win->infotip->Create();
 
     CreateCaption(win);
-    CreateTabbar(win);
+    CreateTabbar(win,false);
     CreateToolbar(win);
     CreateSidebar(win);
     UpdateFindbox(win);
@@ -1390,6 +1390,8 @@ static WindowInfo* CreateWindowInfo() {
     }
 
     SetTabsInTitlebar(win, gGlobalPrefs->useTabs);
+
+    SubclassTabbar(win);
 
     return win;
 }

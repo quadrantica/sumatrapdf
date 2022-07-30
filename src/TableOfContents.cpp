@@ -178,6 +178,7 @@ static void RelayoutTocItem(LPNMTVCUSTOMDRAW ntvcd) {
 }
 #endif
 
+#define Monolith_GoToTocLinkTask
 static void GoToTocLinkTask(TocItem* tocItem, TabInfo* tab, Controller* ctrl) {
     WindowInfo* win = tab->win;
     // tocItem is invalid if the Controller has been replaced
