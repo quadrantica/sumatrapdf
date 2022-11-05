@@ -68,7 +68,7 @@ static bool gPredictiveRender = true;
 
 static int ColumnsFromDisplayMode(DisplayMode displayMode) {
     if (!IsSingle(displayMode)) {
-        return 3;
+        return 7;
     }
     return 1;
 }

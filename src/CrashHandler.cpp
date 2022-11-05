@@ -719,7 +719,7 @@ void InstallCrashHandler(const WCHAR* crashDumpPath, const WCHAR* crashFilePath,
     signal(SIGABRT, onSignalAbort);
 #if COMPILER_MSVC
     ::set_terminate(onTerminate);
-    ::set_unexpected(onUnexpected);
+    //::set_unexpected(onUnexpected);
 #endif
 }
 
